@@ -47,7 +47,7 @@ public class UserController {
 		resource.add(link);
 		
 		
-		return resource;
+		return resource; //user
 	}
 	
 	@PostMapping(path="/user")
