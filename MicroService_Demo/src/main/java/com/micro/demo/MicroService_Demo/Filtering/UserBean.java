@@ -1,8 +1,10 @@
 package com.micro.demo.MicroService_Demo.Filtering;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonFilter("UserBeanFilter")
 //@JsonIgnoreProperties(value= {"password","id"})
 public class UserBean {
 
@@ -10,7 +12,7 @@ public class UserBean {
 	
 	private String name;
 	
-	@JsonIgnore
+	//@JsonIgnore
 	private String password;
 
 	public UserBean(int id, String name, String password) {
