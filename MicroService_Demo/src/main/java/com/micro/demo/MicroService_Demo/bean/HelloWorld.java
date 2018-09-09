@@ -1,4 +1,4 @@
-package com.micro.demo.bean;
+package com.micro.demo.MicroService_Demo.bean;
 
 public class HelloWorld {
 

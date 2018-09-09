@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.micro.demo.bean.User;
+import com.micro.demo.MicroService_Demo.bean.User;
 
 @Component
 public class UserDAOService {

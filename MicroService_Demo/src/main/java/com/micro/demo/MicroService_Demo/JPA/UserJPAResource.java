@@ -1,16 +1,17 @@
-package com.micro.demo.MicroService_Demo.Controller;
+package com.micro.demo.MicroService_Demo.JPA;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
-import org.aspectj.weaver.AjAttribute.MethodDeclarationLineNumberAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,24 +26,26 @@ import com.micro.demo.MicroService_Demo.customexception.UserNotFoundException;
 import com.micro.demo.MicroService_Demo.dao.UserDAOService;
 
 @RestController
-public class UserController {
-
+public class UserJPAResource {
 	@Autowired
 	private UserDAOService userDAOService;
 	
-	@GetMapping(path="/users")
+	@Autowired
+	private UserRepository userRepository;
+	
+	@GetMapping(path="/jpa/users")
 	public List<User> retrieveAllUsers(){
-		return userDAOService.findAll();
+		return userRepository.findAll();
 	}
 	
-	@GetMapping(path="/users/{id}")
+	@GetMapping(path="/jpa//users/{id}")
 	public Resource<User> retrieveUser(@PathVariable int id){
-		User user =  userDAOService.findOne(id);
-		if(user==null)
+		Optional<User> user =  userRepository.findById(id);
+		if(!user.isPresent())
 			throw new UserNotFoundException("id-"+id);
 		
 		//HATEOAS - HyperMedia As The Engine Of Application State
-		Resource<User> resource = new Resource<User>(user);
+		Resource<User> resource = new Resource<User>(user.get());
 		Link link = linkTo(methodOn(this.getClass()).retrieveAllUsers()).withRel("all-users");
 		resource.add(link);
 		
@@ -50,7 +53,7 @@ public class UserController {
 		return resource; //user
 	}
 	
-	@PostMapping(path="/user")
+	/*@PostMapping(path="/jpa//user")
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user){
 		userDAOService.save(user);
 		
@@ -60,11 +63,11 @@ public class UserController {
 		return ResponseEntity.created(location).build();
 	}
 	
-	@DeleteMapping(path="/user/{id}")
+	@DeleteMapping(path="/jpa//user/{id}")
 	public ResponseEntity<Object> deleteById(@PathVariable int id){
 		User user =  userDAOService.deleteById(id);
 		if(user==null)
 			throw new UserNotFoundException("id-"+id);	
 		return ResponseEntity.noContent().build();
-	}
+	}*/
 }
