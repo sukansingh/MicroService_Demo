@@ -27,8 +27,6 @@ import com.micro.demo.MicroService_Demo.dao.UserDAOService;
 
 @RestController
 public class UserJPAResource {
-	@Autowired
-	private UserDAOService userDAOService;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -53,9 +51,9 @@ public class UserJPAResource {
 		return resource; //user
 	}
 	
-	/*@PostMapping(path="/jpa//user")
+	@PostMapping(path="/jpa//user")
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user){
-		userDAOService.save(user);
+		userRepository.save(user);
 		
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId())
 				.toUri();
@@ -65,9 +63,9 @@ public class UserJPAResource {
 	
 	@DeleteMapping(path="/jpa//user/{id}")
 	public ResponseEntity<Object> deleteById(@PathVariable int id){
-		User user =  userDAOService.deleteById(id);
-		if(user==null)
-			throw new UserNotFoundException("id-"+id);	
+		
+		userRepository.deleteById(id);
+			
 		return ResponseEntity.noContent().build();
-	}*/
+	}
 }
