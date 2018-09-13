@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.micro.demo.MicroService_Demo.bean.Post;
 import com.micro.demo.MicroService_Demo.bean.User;
 import com.micro.demo.MicroService_Demo.customexception.UserNotFoundException;
 import com.micro.demo.MicroService_Demo.dao.UserDAOService;
@@ -30,6 +31,9 @@ public class UserJPAResource {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private PostRepository postRepository;
 	
 	@GetMapping(path="/jpa/users")
 	public List<User> retrieveAllUsers(){
@@ -51,7 +55,7 @@ public class UserJPAResource {
 		return resource; //user
 	}
 	
-	@PostMapping(path="/jpa//user")
+	@PostMapping(path="/jpa/user")
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user){
 		userRepository.save(user);
 		
@@ -68,4 +72,31 @@ public class UserJPAResource {
 			
 		return ResponseEntity.noContent().build();
 	}
+	
+	@GetMapping(path="/jpa/users/{id}/posts")
+	public List<Post> retrieveAllPosts(@PathVariable int id) {
+		Optional<User> userOptional = userRepository.findById(id);
+		if(!userOptional.isPresent())
+			throw new UserNotFoundException("id-"+id);
+		
+		return userOptional.get().getPosts();
+	}
+	
+	@PostMapping(path="/jpa/users/{id}/posts")
+	public ResponseEntity<User> createPost(@PathVariable int id, @Valid @RequestBody Post post){
+		Optional<User> userOptional = userRepository.findById(id);
+		if(!userOptional.isPresent())
+			throw new UserNotFoundException("id-"+id);
+		
+		User user = userOptional.get();
+		post.setUser(user);
+		postRepository.save(post);
+		
+		
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(post.getId())
+				.toUri();
+		
+		return ResponseEntity.created(location).build();
+	}
+	
 }
